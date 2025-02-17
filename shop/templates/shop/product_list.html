@@ -1,0 +1,51 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Todos los Productos</h2>
+
+    <!-- Dropdown para seleccionar la versión del auto -->
+    <div class="container text-center mb-4">
+        <form method="GET" action="{% url 'product_list' %}">
+            <select name="version" class="form-select d-inline w-auto">
+                <option value="">Todas las Versiones</option>
+                {% for version in versions %}
+                    <option value="{{ version.id }}" {% if version.id|slugify == selected_version|slugify %}selected{% endif %}>
+                        {{ version.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+    </div>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top">
+                {% else %}
+                    <img src="https://via.placeholder.com/300" class="card-img-top" alt="Imagen no disponible">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.category }} - {{ product.model }}</p>
+                    <p class="card-text text-success fw-bold">${{ product.price }}</p>
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-primary w-100">Ver Detalles</a>
+
+                    {% if request.user.is_staff %}
+                        <a href="{% url 'edit_product' product.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <form method="POST" action="{% url 'delete_product' product.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No hay productos disponibles.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

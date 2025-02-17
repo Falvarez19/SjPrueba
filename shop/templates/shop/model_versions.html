@@ -1,0 +1,14 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="category-title">{{ category|title }} para {{ model.name }}</h2>
+    <div class="d-flex justify-content-center gap-2">
+        {% for version in versions %}
+            <a href="{% url 'category_version_view' model.name category version.id %}" class="btn btn-outline-primary">
+                {{ version.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

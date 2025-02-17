@@ -1,0 +1,51 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Slider Principal -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="carousel-img-container">
+                <img src="{% static 'shop/images/slider1.jpg' %}" class="carousel-img" alt="Slider 1">
+            </div>
+            <div class="carousel-caption">
+                <h1>Bienvenido a Repuestos San Jorge</h1>
+                <p>Compra los mejores accesorios y repuestos al mejor precio</p>
+                <a href="{% url 'product_list' %}" class="btn btn-danger">Comprar Ahora</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categorías -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Categorías</h2>
+    <div class="row">
+        {% for model in models %}
+        <div class="col-md-4 mb-4">
+            <div class="card category-card">
+                <img src="{{ model.image.url }}" alt="{{ model.name }}">
+
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ model.name }}</h5>
+
+                    <!-- Menú desplegable de versiones -->
+                    <div class="dropdown">
+                        <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdown{{ model.id }}" data-bs-toggle="dropdown">
+                            Seleccionar versión
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown{{ model.id }}">
+                            {% for version in model.versions.all %}
+                            <li><a class="dropdown-item" href="{% url 'product_list' %}?version={{ version.id }}">{{ version.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

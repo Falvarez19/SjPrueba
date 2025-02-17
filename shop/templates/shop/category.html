@@ -1,0 +1,36 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">{{ category|capfirst }} para {{ model }}</h2>
+
+        <!-- Submenú de versiones -->
+    <div class="d-flex justify-content-center mb-4">
+        {% for version in versions %}
+            <a href="{% url 'category_version_view' model category version.id %}" class="btn btn-outline-primary mx-2">
+                {{ version.name }}
+            </a>
+        {% endfor %}
+    </div>
+        </div>
+
+    <!-- Mostrar productos -->
+    {% if products %}
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">${{ product.price }}</p>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">No hay productos disponibles en esta categoría.</p>
+    {% endif %}
+{% endblock %}

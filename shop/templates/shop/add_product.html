@@ -1,0 +1,111 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">Agregar Producto</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre del Producto:</label>
+                    <input type="text" name="name" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Categoría:</label>
+                    <select name="category" class="form-select">
+                        {% for category in categories %}
+                            <option value="{{ category.0 }}">{{ category.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descripción:</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Precio:</label>
+                    <input type="number" name="price" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Stock Disponible:</label>
+                    <input type="number" name="stock" class="form-control" value="0">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Imagen del Producto:</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Modelos Compatibles:</label>
+                    <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                        {% for model in models %}
+                            <div class="form-check">
+                                <input class="form-check-input model-checkbox" type="checkbox" name="models" value="{{ model.id }}">
+                                <label class="form-check-label">{{ model.name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Versiones Compatibles:</label>
+                    <div id="version-list" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                        {% for version in versions %}
+                            <div class="form-check version-checkbox" data-model="{{ version.model.id }}" style="display: none;">
+                                <input class="form-check-input" type="checkbox" name="versions" value="{{ version.id }}">
+                                <label class="form-check-label">{{ version.name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modelCheckboxes = document.querySelectorAll(".model-checkbox");
+        const versionCheckboxes = document.querySelectorAll(".version-checkbox");
+        const versionList = document.getElementById("version-list");
+
+        function updateVersions() {
+            let selectedModels = new Set();
+            modelCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedModels.add(checkbox.value);
+                }
+            });
+
+            let hasSelectedModel = selectedModels.size > 0;
+            versionList.style.display = hasSelectedModel ? "block" : "none";
+
+            versionCheckboxes.forEach(version => {
+                if (selectedModels.has(version.getAttribute("data-model"))) {
+                    version.style.display = "block";
+                } else {
+                    version.style.display = "none";
+                    version.querySelector("input").checked = false;
+                }
+            });
+        }
+
+        modelCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", updateVersions);
+        });
+
+        updateVersions();
+    });
+</script>
+{% endblock %}
